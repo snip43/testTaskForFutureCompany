@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import FilterPanel from '../filterPanel';
+import Paginator from '../paginator';
+import Table from '../table/table';
+import TableService from '../../service/table-service';
+import Spinner from '../spinner';
+// import styles from './app.module.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default class App extends Component {
+  state = {
+    data: [],
+    loading: false,
+    error: false,
+  };
+
+  componentDidMount() {
+    const tableService = new TableService();
+    tableService.getUsers().then((users) => {
+      this.setState({ data: users });
+    });
+  }
+  render() {
+    const { data } = this.state;
+    if (!data) {
+      return <Spinner />;
+    }
+
+    return (
+      <div className={`container`}>
+        <Paginator />
+        <FilterPanel />
+        <Table data={data} />
+      </div>
+    );
+  }
 }
-
-export default App;
