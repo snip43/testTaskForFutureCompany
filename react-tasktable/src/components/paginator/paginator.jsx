@@ -1,6 +1,11 @@
 import React from 'react';
 
-const Paginator = () => {
+const Paginator = ({ totalUsers, pageSize, currentPage, setCurrenPage }) => {
+  const countPages = Math.ceil(totalUsers / pageSize);
+  let pages = [];
+  for (let i = 1; i <= countPages; i++) {
+    pages.push(i);
+  }
   return (
     <nav aria-label="Page navigation example">
       <ul className="pagination pagination-sm justify-content-center mt-3">
@@ -9,21 +14,20 @@ const Paginator = () => {
             <span aria-hidden="true">&laquo;</span>
           </a>
         </li>
-        <li className="page-item active">
-          <a className="page-link " href="#">
-            1
-          </a>
-        </li>
-        <li className="page-item">
-          <a className="page-link" href="#">
-            2
-          </a>
-        </li>
-        <li className="page-item">
-          <a className="page-link" href="#">
-            3
-          </a>
-        </li>
+
+        {pages.map((page, index) => {
+          return (
+            <li
+              className={currentPage === page ? `active page-item` : `page-item`}
+              key={index}
+              onClick={() => setCurrenPage(page)}>
+              <a className="page-link " href="#">
+                {page}
+              </a>
+            </li>
+          );
+        })}
+
         <li className="page-item">
           <a className="page-link" href="#" aria-label="Next">
             <span aria-hidden="true">&raquo;</span>

@@ -1,14 +1,26 @@
 import React from 'react';
+import block from 'bem-cn';
+import './tableHead.scss';
+const cn = block('table');
 
-const TableHead = () => {
+const TableHead = ({ columns, getSort }) => {
   return (
     <thead className={`thead-dark`}>
       <tr>
-        <th scope="col">id</th>
-        <th scope="col">firstName</th>
-        <th scope="col">lastName</th>
-        <th scope="col">email</th>
-        <th scope="col">phone</th>
+        {columns.map((elem, i) => (
+          <th
+            scope="col"
+            key={i}
+            className={cn('sorting')
+              .state({
+                sortASC: elem.sort === 'asc',
+                sortDESC: elem.sort === 'desc',
+              })
+              .mix('sorting-block text-nowrap')}
+            onClick={() => getSort(i, elem.sort)}>
+            {elem.label}
+          </th>
+        ))}
       </tr>
     </thead>
   );
