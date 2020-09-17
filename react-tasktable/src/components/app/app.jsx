@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import FilterPanel from '../filterPanel';
-import Paginator from '../paginator';
 import Table from '../table/table';
 import TableService from '../../service/table-service';
 import Spinner from '../spinner/';
 import _ from 'lodash';
 import Choice from '../choice/choice';
+import ReactPaginate from 'react-paginate';
 // import styles from './app.module.css';
 const tableService = new TableService();
 export default class App extends Component {
   state = {
     data: [], // данные с сервера
-    isLoading: false, // загрузка
+    isLoading: true, // загрузка
     sort: 'asc', // 'desc'
-    sortColumn: 'id', // поле по умолчанию
+    sortField: 'id', // поле по умолчанию
     totalUsers: null, // всего юзеров приходит с сервера
     userSelected: null,
     currentPage: 1, // текущая страница
@@ -26,9 +26,9 @@ export default class App extends Component {
 
   //---------------------Жизненный цикл --------------
   componentDidMount() {
-    // tableService.getUsers(32).then((users) => {
-    //   this.setState({ data: users, isLoading: false, totalUsers: users.length });
-    // });
+    tableService.getUsers(32).then((users) => {
+      this.setState({ data: users, isLoading: false, totalUsers: users.length });
+    });
   }
   //-------------Вывод детальной информации о пользователе ----------
   viewUserInfo = (elem) => {
@@ -71,15 +71,11 @@ export default class App extends Component {
     this.setState({
       data: sortingData,
       sort: sortMethod,
-      sortColumn,
+      sortField: sortColumn,
     });
   };
   //------------------------------- Флаг выбора количества элементов --------------
   onChangeVolume = (num) => {
-    this.setState({
-      isLoading: true,
-    });
-
     tableService.getUsers(num).then((users) => {
       this.setState({
         data: users,
@@ -89,7 +85,11 @@ export default class App extends Component {
       });
     });
   };
-  //---------------------------------------------------------------------------------
+  //--------------------------------------Функция пагинации-------------------------------------------
+
+  handlePageClick = ({ selected }) => {
+    this.setState({ currentPage: selected });
+  };
 
   render() {
     const {
@@ -97,10 +97,13 @@ export default class App extends Component {
       filterStr,
       isLoading,
       userSelected,
-      sortColumn,
+      sortField,
       sort,
       isSelectedVolume,
+      pageSize,
     } = this.state;
+
+    const viewUsers = _.chunk(data, pageSize)[this.state.currentPage];
 
     if (!isSelectedVolume) {
       return <Choice onChangeVolume={this.onChangeVolume} />;
@@ -111,11 +114,25 @@ export default class App extends Component {
     return (
       <div className={`container`}>
         {data.length > 50 ? (
-          <Paginator
-            totalUsers={this.props.totalUsers}
-            currentPage={this.props.currentPage}
-            pageSize={this.props.pageSize}
-            setCurrenPage={this.setCurrentPage}
+          <ReactPaginate
+            previousLabel={'previous'}
+            nextLabel={'next'}
+            breakLabel={'...'}
+            breakClassName={'break-me'}
+            pageCount={`${this.state.totalUsers}/${this.state.pageSize}`}
+            marginPagesDisplayed={2}
+            initialPage={1}
+            pageRangeDisplayed={10}
+            onPageChange={this.handlePageClick}
+            containerClassName={'pagination'}
+            activeClassName={'active'}
+            pageClassName="page-item"
+            pageLinkClassName="page-link"
+            previousClassName="page-item"
+            nextClassName="page-item"
+            previousLinkClassName="page-link"
+            nextLinkClassName="page-link"
+            forcePage={this.state.currentPage}
           />
         ) : null}
 
@@ -124,10 +141,10 @@ export default class App extends Component {
           <Spinner />
         ) : (
           <Table
-            data={data}
+            data={viewUsers}
             getSort={this.sortTableFunc}
             sort={sort}
-            sortColumn={sortColumn}
+            sortField={sortField}
             userSelected={userSelected}
             viewUserInfo={this.viewUserInfo}
           />

@@ -9,7 +9,9 @@ const Choice = ({ onChangeVolume }) => {
         <button
           type="submit"
           className="btn btn-outline-dark btn-block"
-          onClick={() => onChangeVolume(32)}>
+          onClick={() => {
+            onChangeVolume(32);
+          }}>
           32 элемента
         </button>
         <button

@@ -2,7 +2,7 @@ const state = {
   data: [], // данные с сервера
   isLoading: true, // загрузка
   sort: 'asc', // 'desc'
-  sortField: 'id', // поле по умолчанию
+  sortColumn: 'id', // поле по умолчанию
   totalUsers: null, // всего юзеров приходит с сервера
   currentPage: 1, // текущая страница
   pageSize: 10, // количество выводимых юзеров на странице

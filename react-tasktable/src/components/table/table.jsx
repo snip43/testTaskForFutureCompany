@@ -5,9 +5,9 @@ import UserInfo from '../userInfo/userInfo';
 
 // import Spinner from '../spinner/';
 
-const Table = ({ getSort, data, sort, sortColumn, userSelected, viewUserInfo }) => {
+const Table = ({ getSort, data, sort, sortField, userSelected, viewUserInfo }) => {
   const sortDirection = (field) => {
-    return sortColumn === field
+    return sortField === field
       ? sort === 'asc'
         ? 'sorting-block is-sortASC'
         : sort === 'desc'
@@ -19,12 +19,7 @@ const Table = ({ getSort, data, sort, sortColumn, userSelected, viewUserInfo }) 
   return (
     <>
       <table className={`table table-hover`}>
-        <TableHead
-          getSort={getSort}
-          sort={sort}
-          sortColumn={sortColumn}
-          sortDirection={sortDirection}
-        />
+        <TableHead getSort={getSort} sortDirection={sortDirection} />
         <TableBody data={data} viewUserInfo={viewUserInfo} />
       </table>
       {userSelected ? <UserInfo elem={userSelected} /> : null}
