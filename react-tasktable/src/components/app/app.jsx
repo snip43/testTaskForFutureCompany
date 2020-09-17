@@ -14,8 +14,9 @@ export default class App extends Component {
     sort: 'asc', // 'desc'
     sortField: 'id', // поле по умолчанию
     totalUsers: null, // всего юзеров приходит с сервера
+    userSelected: null,
     currentPage: 1, // текущая страница
-    pageSize: 10, // количество выводимых юзеров на странице
+    pageSize: 50, // количество выводимых юзеров на странице
     filterStr: '', // строка фильтрации
     isError: false, // загрузка
     tableHead: ['id', 'First Name', 'Last Name', 'e-mail', 'phone'],
@@ -26,6 +27,12 @@ export default class App extends Component {
       this.setState({ data: users, isLoading: false, totalUsers: users.length });
     });
   }
+
+  viewUserInfo = (elem) => {
+    this.setState({
+      userSelected: elem,
+    });
+  };
 
   // componentWillMount() {
   //   const { data } = this.state;
@@ -65,7 +72,7 @@ export default class App extends Component {
   };
 
   render() {
-    const { data, filterStr, isLoading } = this.state;
+    const { data, filterStr, isLoading, userSelected, sortField, sort } = this.state;
 
     // const visibleItems = this.searchFilter(data, filterStr);
 
@@ -84,8 +91,10 @@ export default class App extends Component {
           <Table
             data={data}
             getSort={this.sortTableFunc}
-            sort={this.state.sort}
-            sortField={this.state.sortField}
+            sort={sort}
+            sortField={sortField}
+            userSelected={userSelected}
+            viewUserInfo={this.viewUserInfo}
           />
         )}
       </div>
