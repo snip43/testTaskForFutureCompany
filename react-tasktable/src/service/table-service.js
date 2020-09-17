@@ -1,14 +1,23 @@
 export default class TableService {
-  _getData = async () => {
-    const url = `http://www.filltext.com/?rows=32&id={number|1000}&firstName={firstName}&lastName={lastName}&email={email}&phone={phone|(xxx)xxx-xx-xx}&address={addressObject}&description={lorem|32}`;
+  _getData = async (num) => {
+    const url = `http://www.filltext.com/?rows=${num}&id={number|1000}&firstName={firstName}&lastName={lastName}&email={email}&phone={phone|(xxx)xxx-xx-xx}&address={addressObject}&description={lorem|32}`;
     return fetch(url);
   };
 
-  getUsers = async () => {
-    if (!(await this._getData()).ok) {
+  getUsers = async (peoples) => {
+    if (!(await this._getData(peoples)).ok) {
       throw new Error('Server Error');
     }
 
-    return await this._getData().then((res) => res.json());
+    return await this._getData(peoples).then((res) => res.json());
   };
+
+  // getUsersBig = async () => {
+  //   const
+  //   if (!(await this._getDataSmall()).ok) {
+  //     throw new Error('Server Error');
+  //   }
+
+  //   return await this._getData().then((res) => res.json());
+  // };
 }

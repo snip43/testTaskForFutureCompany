@@ -5,14 +5,15 @@ import Table from '../table/table';
 import TableService from '../../service/table-service';
 import Spinner from '../spinner/';
 import _ from 'lodash';
+import Choice from '../choice/choice';
 // import styles from './app.module.css';
-
+const tableService = new TableService();
 export default class App extends Component {
   state = {
     data: [], // данные с сервера
-    isLoading: true, // загрузка
+    isLoading: false, // загрузка
     sort: 'asc', // 'desc'
-    sortField: 'id', // поле по умолчанию
+    sortColumn: 'id', // поле по умолчанию
     totalUsers: null, // всего юзеров приходит с сервера
     userSelected: null,
     currentPage: 1, // текущая страница
@@ -20,14 +21,16 @@ export default class App extends Component {
     filterStr: '', // строка фильтрации
     isError: false, // загрузка
     tableHead: ['id', 'First Name', 'Last Name', 'e-mail', 'phone'],
+    isSelectedVolume: false,
   };
-  componentDidMount() {
-    const tableService = new TableService();
-    tableService.getUsers().then((users) => {
-      this.setState({ data: users, isLoading: false, totalUsers: users.length });
-    });
-  }
 
+  //---------------------Жизненный цикл --------------
+  componentDidMount() {
+    // tableService.getUsers(32).then((users) => {
+    //   this.setState({ data: users, isLoading: false, totalUsers: users.length });
+    // });
+  }
+  //-------------Вывод детальной информации о пользователе ----------
   viewUserInfo = (elem) => {
     this.setState({
       userSelected: elem,
@@ -59,6 +62,7 @@ export default class App extends Component {
   //   });
   // };
 
+  //------------------------функция сортировки столбца------
   sortTableFunc = (sortColumn) => {
     const { data, sort } = this.state;
     const dataCopy = data.concat();
@@ -67,23 +71,54 @@ export default class App extends Component {
     this.setState({
       data: sortingData,
       sort: sortMethod,
-      sortField: sortColumn,
+      sortColumn,
     });
   };
+  //------------------------------- Флаг выбора количества элементов --------------
+  onChangeVolume = (num) => {
+    this.setState({
+      isLoading: true,
+    });
+
+    tableService.getUsers(num).then((users) => {
+      this.setState({
+        data: users,
+        isLoading: false,
+        isSelectedVolume: true,
+        totalUsers: users.length,
+      });
+    });
+  };
+  //---------------------------------------------------------------------------------
 
   render() {
-    const { data, filterStr, isLoading, userSelected, sortField, sort } = this.state;
+    const {
+      data,
+      filterStr,
+      isLoading,
+      userSelected,
+      sortColumn,
+      sort,
+      isSelectedVolume,
+    } = this.state;
+
+    if (!isSelectedVolume) {
+      return <Choice onChangeVolume={this.onChangeVolume} />;
+    }
 
     // const visibleItems = this.searchFilter(data, filterStr);
 
     return (
       <div className={`container`}>
-        <Paginator
-          totalUsers={this.props.totalUsers}
-          currentPage={this.props.currentPage}
-          pageSize={this.props.pageSize}
-          setCurrenPage={this.setCurrentPage}
-        />
+        {data.length > 50 ? (
+          <Paginator
+            totalUsers={this.props.totalUsers}
+            currentPage={this.props.currentPage}
+            pageSize={this.props.pageSize}
+            setCurrenPage={this.setCurrentPage}
+          />
+        ) : null}
+
         <FilterPanel data={data} handleFilter={this.handleFilter} filterStr={filterStr} />
         {isLoading ? (
           <Spinner />
@@ -92,7 +127,7 @@ export default class App extends Component {
             data={data}
             getSort={this.sortTableFunc}
             sort={sort}
-            sortField={sortField}
+            sortColumn={sortColumn}
             userSelected={userSelected}
             viewUserInfo={this.viewUserInfo}
           />

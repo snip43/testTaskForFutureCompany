@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import React from 'react';
 import TableBody from '../tableBody';
 import TableHead from '../tableHead';
 import UserInfo from '../userInfo/userInfo';
 
 // import Spinner from '../spinner/';
 
-const Table = ({ getSort, data, sort, sortField, userSelected, viewUserInfo }) => {
+const Table = ({ getSort, data, sort, sortColumn, userSelected, viewUserInfo }) => {
   const sortDirection = (field) => {
-    return sortField === field
+    return sortColumn === field
       ? sort === 'asc'
         ? 'sorting-block is-sortASC'
         : sort === 'desc'
@@ -22,7 +22,7 @@ const Table = ({ getSort, data, sort, sortField, userSelected, viewUserInfo }) =
         <TableHead
           getSort={getSort}
           sort={sort}
-          sortField={sortField}
+          sortColumn={sortColumn}
           sortDirection={sortDirection}
         />
         <TableBody data={data} viewUserInfo={viewUserInfo} />

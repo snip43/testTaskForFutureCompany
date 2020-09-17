@@ -1,14 +1,15 @@
 import React from 'react';
 
-const UserInfo = ({ elem }) => {
-  console.log(elem);
+const UserInfo = ({ elem, defaultValue }) => {
   return (
     <div className="d-flex flex-column justify-content-end jumbotron p-3">
       <h3>
         Выбран пользователь <b>{`${elem.firstName} ${elem.lastName}`}</b>
       </h3>
       <h4>Описание:</h4>
-      <textarea>{elem.description}</textarea>
+      <textarea readOnly disabled value={defaultValue}>
+        {elem.description}
+      </textarea>
       <p>
         Адрес проживания: <b>{elem.address.streetAddress}</b>
       </p>
