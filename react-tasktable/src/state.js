@@ -1,20 +1,14 @@
-export const state = {
-  data: [
-    {
-      id: 101,
-      firstName: 'Sue',
-      lastName: 'Corson',
-      email: 'DWhalley@in.gov',
-      phone: '(612)211-6296',
-      address: {
-        streetAddress: '9792 Mattis Ct',
-        city: 'Waukesha',
-        state: 'WI',
-        zip: '22178',
-      },
-      description: 'et lacus magna dolor...',
-    },
-  ],
-  loading: false,
-  error: false,
+const state = {
+  data: [], // данные с сервера
+  isLoading: true, // загрузка
+  sort: 'asc', // 'desc'
+  sortField: 'id', // поле по умолчанию
+  totalUsers: null, // всего юзеров приходит с сервера
+  currentPage: 1, // текущая страница
+  pageSize: 10, // количество выводимых юзеров на странице
+  filterStr: '', // строка фильтрации
+  isError: false, // загрузка
+  tableHead: ['id', 'First Name', 'Last Name', 'e-mail', 'phone'],
 };
+
+export default state;

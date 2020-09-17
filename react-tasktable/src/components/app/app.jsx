@@ -4,45 +4,26 @@ import Paginator from '../paginator';
 import Table from '../table/table';
 import TableService from '../../service/table-service';
 import Spinner from '../spinner/';
+import _ from 'lodash';
 // import styles from './app.module.css';
 
 export default class App extends Component {
   state = {
-    data: [],
-    totalUsers: null,
-    currentPage: 1,
-    pageSize: 10,
-    filterStr: '',
-    loading: false,
-    error: false,
-    tableColumns: [
-      {
-        label: 'id',
-        sort: 'default',
-      },
-      {
-        label: 'firstName',
-        sort: 'default',
-      },
-      {
-        label: 'lastName',
-        sort: 'default',
-      },
-      {
-        label: 'email',
-        sort: 'default',
-      },
-      {
-        label: 'phone',
-        sort: 'default',
-      },
-    ],
+    data: [], // данные с сервера
+    isLoading: true, // загрузка
+    sort: 'asc', // 'desc'
+    sortField: 'id', // поле по умолчанию
+    totalUsers: null, // всего юзеров приходит с сервера
+    currentPage: 1, // текущая страница
+    pageSize: 10, // количество выводимых юзеров на странице
+    filterStr: '', // строка фильтрации
+    isError: false, // загрузка
+    tableHead: ['id', 'First Name', 'Last Name', 'e-mail', 'phone'],
   };
-
   componentDidMount() {
     const tableService = new TableService();
     tableService.getUsers().then((users) => {
-      this.setState({ data: users, totalUsers: users.length });
+      this.setState({ data: users, isLoading: false, totalUsers: users.length });
     });
   }
 
@@ -71,20 +52,42 @@ export default class App extends Component {
   //   });
   // };
 
+  sortTableFunc = (sortColumn) => {
+    const { data, sort } = this.state;
+    const dataCopy = data.concat();
+    const sortMethod = sort === 'asc' ? 'desc' : 'asc';
+    const sortingData = _.orderBy(dataCopy, sortColumn, sortMethod);
+    this.setState({
+      data: sortingData,
+      sort: sortMethod,
+      sortField: sortColumn,
+    });
+  };
+
   render() {
-    const { data, filterStr, tableColumns, loading } = this.state;
+    const { data, filterStr, isLoading } = this.state;
+
     // const visibleItems = this.searchFilter(data, filterStr);
 
     return (
       <div className={`container`}>
         <Paginator
-          totalUsers={this.state.totalUsers}
-          currentPage={this.state.currentPage}
-          pageSize={this.state.pageSize}
-          setCurrenPage={this.setCurrenPage}
+          totalUsers={this.props.totalUsers}
+          currentPage={this.props.currentPage}
+          pageSize={this.props.pageSize}
+          setCurrenPage={this.setCurrentPage}
         />
         <FilterPanel data={data} handleFilter={this.handleFilter} filterStr={filterStr} />
-        {loading ? <Spinner /> : <Table data={data} columns={tableColumns} />}
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <Table
+            data={data}
+            getSort={this.sortTableFunc}
+            sort={this.state.sort}
+            sortField={this.state.sortField}
+          />
+        )}
       </div>
     );
   }
