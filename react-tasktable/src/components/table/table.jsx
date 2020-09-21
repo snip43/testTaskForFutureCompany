@@ -3,9 +3,7 @@ import TableBody from '../tableBody';
 import TableHead from '../tableHead';
 import UserInfo from '../userInfo/userInfo';
 
-// import Spinner from '../spinner/';
-
-const Table = ({ getSort, data, sort, sortField, userSelected, viewUserInfo }) => {
+const Table = ({ getSort, data, sort, sortField, userSelected, viewUserInfo, viewUsers }) => {
   const sortDirection = (field) => {
     return sortField === field
       ? sort === 'asc'
@@ -28,9 +26,3 @@ const Table = ({ getSort, data, sort, sortField, userSelected, viewUserInfo }) =
 };
 
 export default Table;
-
-//  ({ data, pageSize }) => {
-//   if (!data) {
-//     return <Spinner />;
-//   }
-/* <UserInfo data={data} /> */

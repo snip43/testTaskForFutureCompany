@@ -1,17 +1,45 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-const FilterPanel = ({ handleFilter, filterStr, data }) => {
-  return (
-    <form>
-      <input
-        className="form-control form-control-sm my-3 "
-        type="text"
-        name="filterPanel"
-        value={filterStr}
-        id="filterPanel"
-        placeholder="Что ищем ?"
-        onChange={(e) => handleFilter(e.target.value, data)}></input>
-    </form>
-  );
-};
-export default FilterPanel;
+export default class FilterPanel extends Component {
+  state = {
+    filterStr: '',
+  };
+
+  onSearchChange = (e) => {
+    const filterStr = e.target.value;
+    this.setState({ filterStr: filterStr });
+    this.props.onSearchChange(filterStr);
+  };
+
+  render() {
+    const { filterStr } = this.state;
+    return (
+      <div className="input-group my-3 mt-3">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Что ищем ?"
+          value={filterStr}
+          onChange={this.onSearchChange}
+        />
+      </div>
+    );
+  }
+}
+
+// = ({ searchFilter }) => {
+//   const [value, setValue] = useState('');
+//   const valueChange = (e) => {
+//     setValue(e.target.value);
+//   };
+//   return (
+//     <div className="input-group my-3 mt-3">
+//       <div className="input-group-prepend">
+//         <button className="btn btn-outline-secondary" onClick={() => searchFilter(value)}>
+//           Search
+//         </button>
+//       </div>
+
+//     </div>
+//   );
+// };

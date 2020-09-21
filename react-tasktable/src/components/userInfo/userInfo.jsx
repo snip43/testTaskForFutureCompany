@@ -3,25 +3,25 @@ import React from 'react';
 const UserInfo = ({ elem, defaultValue }) => {
   return (
     <div className="d-flex flex-column justify-content-end jumbotron p-3">
-      <h3>
+      <h6>
         Выбран пользователь <b>{`${elem.firstName} ${elem.lastName}`}</b>
-      </h3>
-      <h4>Описание:</h4>
+      </h6>
+      <h6>Описание:</h6>
       <textarea readOnly disabled value={defaultValue}>
         {elem.description}
       </textarea>
-      <p>
+      <h6>
         Адрес проживания: <b>{elem.address.streetAddress}</b>
-      </p>
-      <p>
+      </h6>
+      <h6>
         Город: <b>{elem.address.city}</b>
-      </p>
-      <p>
+      </h6>
+      <h6>
         Провинция/штат: <b>{elem.address.state}</b>
-      </p>
-      <p>
+      </h6>
+      <h6>
         Индекс: <b>{elem.address.zip}</b>
-      </p>
+      </h6>
     </div>
   );
 };
