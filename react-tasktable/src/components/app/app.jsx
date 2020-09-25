@@ -51,10 +51,10 @@ export default class App extends Component {
     }
     return items.filter((item) => {
       return (
-        item.firstName.toLowerCase().indexOf(filterStr.toLowerCase()) > -1
-        // item.lastName.toLowerCase().indexOf(filterStr.toLowerCase()) > -1 ||
-        // item.email.toLowerCase().indexOf(filterStr.toLowerCase()) > -1 ||
-        // item.phone.toLowerCase().indexOf(filterStr.toLowerCase()) > -1
+        item.firstName.toLowerCase().indexOf(filterStr.toLowerCase()) > -1 ||
+        item.lastName.toLowerCase().indexOf(filterStr.toLowerCase()) > -1 ||
+        item.email.toLowerCase().indexOf(filterStr.toLowerCase()) > -1 ||
+        item.phone.toLowerCase().indexOf(filterStr.toLowerCase()) > -1
       );
     });
   };
@@ -93,10 +93,20 @@ export default class App extends Component {
     this.setState({ currentPage: selected });
   };
 
-  //----------------------
+  //----------------------Кнопка "добавить" -------------------
   toggleOpenForm = () => {
-    this.setState((state) => ({ isFormOpen: !state.isFormOpen }));
+    const { isFormOpen } = this.state;
+    this.setState({ isFormOpen: !isFormOpen });
   };
+
+  //-----------------------------------------------------------
+
+  btnAddUser = () => {
+    alert('Данные добавлены в таблицу!');
+    this.toggleOpenForm();
+  };
+
+  //------------------------------------------------------------
 
   render() {
     const {
@@ -126,8 +136,14 @@ export default class App extends Component {
           <Spinner />
         ) : (
           <>
-            <Header onSearchChange={this.onSearchChange} toggleOpenForm={this.toggleOpenForm} />
-            {isFormOpen ? <AddUser toggleOpenForm={this.toggleOpenForm} /> : null}
+            <Header
+              onSearchChange={this.onSearchChange}
+              toggleOpenForm={this.toggleOpenForm}
+              btnAddUser
+            />
+            {isFormOpen ? (
+              <AddUser toggleOpenForm={this.toggleOpenForm} btnAddUser={this.btnAddUser} />
+            ) : null}
             <Table
               data={displayData}
               getSort={this.sortTableFunc}

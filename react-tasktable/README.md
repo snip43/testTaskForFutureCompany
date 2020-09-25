@@ -1,68 +1,138 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Задание
+Необходимо разработать React-приложение для отображения таблицы с данными. Дополнительным плюсом будет: Финальный билд приложения должен быть запускаться из Docker контейнера (хотябы с минимальной конфигурацией)
 
-## Available Scripts
+Для стилизации компонентов подключили 'npm i bootstrap' + scss
 
-In the project directory, you can run:
+Функционал
 
-### `npm start`
+Сортировка по столбцам: при нажатии на название столбца строки таблицы сортируются по возрастанию, при повторном клике — по убыванию. Графическим элементом или текстовым сообщением указывается направление сортировки.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Реализация: С помощью lodash-метода .orderBy,который позволяет указать порядок сортировки итераций для сортировки. Если порядок не указан, все значения сортируются в порядке возрастания.
+//------------------------функция сортировки столбца------
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+sortTableFunc = (sortColumn) => {
+const { data, sort } = this.state;
+const dataCopy = [...data];
+const sortMethod = sort === 'asc' ? 'desc' : 'asc';
+const sortingData = \_.orderBy(dataCopy, sortColumn, sortMethod);
+this.setState({
+data: sortingData,
+sort: sortMethod,
+sortField: sortColumn,
+});
+};
 
-### `npm test`
+//----------------------------------------------------------------------------------------------------------------------
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Клиентская пагинация: данные необходимо отображать постранично, максимум 50 элементов на страницу.
+Необходимо предоставить пользовательскую навигацию для перехода по страницам.
 
-### `npm run build`
+Реализация:
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Используем npm i react-paginate;
+- свойство в стейте currentPage(текущая страница)
+- свойство pageSize(размер страницы,по заданию pageSize:50)
+- lodash.chunk -Создает массив элементов, разбитых на группы по длине размера. Если массив не может быть разделен равномерно, то последним фрагментом будут оставшиеся элементы.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+//---------------------------------
+onPageChange = ({ selected }) => {
+this.setState({ currentPage: selected });
+};
+//-------------------------------------
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+{data.length > pageSize ? (
+<ReactPaginate
+previousLabel={'previous'}
+nextLabel={'next'}
+breakLabel={'...'}
+breakClassName={'break-me'}
+pageCount={pageCount}
+marginPagesDisplayed={2}
+initialPage={1}
+pageRangeDisplayed={10}
+onPageChange={this.onPageChange}
+containerClassName={'pagination'}
+activeClassName={'active'}
+pageClassName="page-item"
+pageLinkClassName="page-link"
+previousClassName="page-item"
+nextClassName="page-item"
+previousLinkClassName="page-link"
+nextLinkClassName="page-link"
+forcePage={this.state.currentPage}
+/>
+) : null}
 
-### `npm run eject`
+//---------------------------------------------
+const displayData = \_.chunk(visibleItems, pageSize)[currentPage]; // видимые элементы таблицы с учетом текущей страницы
+//------------------------------------------------------------------------------------------------------------------------
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Фильтрация: компонент предоставляет текстовое поле, в которое пользователь может ввести текст и строки таблицы, данные которых не содержат подстроку, введённую пользователем, скрываются. Перефильтрация осуществляется по нажатию на кнопку "Найти".
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Реализация:
+-Используем "контролируемое" свойство в стейте "filterStr: '' "(Значение value в поле input)
+-Кнопку "Найти" делать не стал. Поиск осуществляется по событию onChange в поле <input>
+-Функция searchFilter принимает первым аргументом массив данных,вторым значение поля "filterStr"
+-вывод
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+//----------------------------поиск/фильтрация элементов------------------
+onSearchChange = (filterStr) => {
+this.setState({ filterStr });
+};
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+searchFilter = (items, filterStr) => {
+if (filterStr === 0) {
+return items;
+}
+return items.filter((item) => {
+return (
+item.firstName.toLowerCase().indexOf(filterStr.toLowerCase()) > -1 ||
+item.lastName.toLowerCase().indexOf(filterStr.toLowerCase()) > -1 ||
+item.email.toLowerCase().indexOf(filterStr.toLowerCase()) > -1 ||
+item.phone.toLowerCase().indexOf(filterStr.toLowerCase()) > -1
+);
+});
+};
+//--------------------------------------------
+const visibleItems = this.searchFilter(data, filterStr); //видимые элементы массива
+//------------------------------------------------------------------------------------------------------------------------
 
-## Learn More
+По клику на строку таблицы значения полей выводятся в дополнительном блоке под таблицей.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Реализация:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- В стейте новое свойство - 'userSelected: null'
+- На каждый элемент в таблице навешиваем функцию viewUserInfo
+  //-------------Вывод детальной информации о пользователе ----------
+  viewUserInfo = (elem) => {
+  this.setState({
+  userSelected: elem,
+  });
+  };
+  //------------------------------------------
+  При клике на элемент таблицы открывается компонент UserInfo внизу таблицы.
+  //-----------------------------------------------------------------------------------------------------------------------
 
-### Code Splitting
+Данные в таблицу загружаются с сервера filltext.com посредством метода fetch().
+//-----------------------------------------------------------------------------------------------------------------------
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+Над таблицей присутсвует кнопка добавить, по нажатию на которую выпадает форма добавления ряда +------+------------+-----------------+-----------------+---------------+ | id | firstName | lastName | email | phone | +------+------------+-----------------+-----------------+---------------+ |input | input | input | input | input | +------+------------+-----------------+-----------------+---------------+
+После заполнения всех инпутов активируется кнопка Добавить в таблицу которая вставляет заполненный ряд в начало таблицы
 
-### Analyzing the Bundle Size
+Реализация:
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+- используем флаг isOpenForm
+- используем функцию toggleOpenForm
+  //----------------------Кнопка "добавить" -------------------
+  toggleOpenForm = () => {
+  this.setState((state) => ({ isFormOpen: !state.isFormOpen }));
+  };
+  //--------------------------------------
+  По клику флаг меняется на true и на экран выводится форма AddUser.
+  //------------------------------------------------------------------------------------------------------------------------
+  Для демонстрации работы компонента необходимо сделать простую HTML страницу. Пользователю предлагается выбрать набор данных: маленький или большой. При выборе набора данных он загружается с сервера и по данным строится таблица.
 
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+  Реализация:
+  На главном экране выведено 2 кнопки: "32 элемента" и "1000 элементов".
+  По нажатию на кнопку выводится соответствующее количество элементов в таблицу.
+  //------------------------------------------------------------------------------------------------------------------------
