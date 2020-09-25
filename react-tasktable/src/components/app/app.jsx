@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import FilterPanel from '../filterPanel';
 import Table from '../table/table';
 import TableService from '../../service/table-service';
 import Spinner from '../spinner/';
 import _ from 'lodash';
 import Choice from '../choice/choice';
 import ReactPaginate from 'react-paginate';
+
+import AddUser from '../addUser/addUser';
+import Header from '../header/header';
 // import styles from './app.module.css';
 const tableService = new TableService();
 export default class App extends Component {
@@ -22,7 +24,14 @@ export default class App extends Component {
     isError: false, // загрузка
     tableHead: ['id', 'First Name', 'Last Name', 'e-mail', 'phone'],
     isSelectedVolume: false,
+    isFormOpen: false,
   };
+
+  componentDidMount() {
+    tableService.getUsers(32).then((data) => {
+      this.setState({ data });
+    });
+  }
 
   //-------------Вывод детальной информации о пользователе ----------
   viewUserInfo = (elem) => {
@@ -72,7 +81,7 @@ export default class App extends Component {
     tableService.getUsers(num).then((users) => {
       this.setState({
         isLoading: false,
-        data: _.orderBy(users, users.id, 'asc'),
+        data: _.orderBy(users, 'id', 'asc'),
         totalUsers: data.length,
       });
     });
@@ -82,6 +91,11 @@ export default class App extends Component {
 
   onPageChange = ({ selected }) => {
     this.setState({ currentPage: selected });
+  };
+
+  //----------------------
+  toggleOpenForm = () => {
+    this.setState((state) => ({ isFormOpen: !state.isFormOpen }));
   };
 
   render() {
@@ -95,6 +109,7 @@ export default class App extends Component {
       pageSize,
       filterStr,
       currentPage,
+      isFormOpen,
     } = this.state;
 
     const visibleItems = this.searchFilter(data, filterStr);
@@ -111,7 +126,8 @@ export default class App extends Component {
           <Spinner />
         ) : (
           <>
-            <FilterPanel onSearchChange={this.onSearchChange} />
+            <Header onSearchChange={this.onSearchChange} toggleOpenForm={this.toggleOpenForm} />
+            {isFormOpen ? <AddUser toggleOpenForm={this.toggleOpenForm} /> : null}
             <Table
               data={displayData}
               getSort={this.sortTableFunc}

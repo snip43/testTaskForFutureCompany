@@ -14,7 +14,7 @@ export default class FilterPanel extends Component {
   render() {
     const { filterStr } = this.state;
     return (
-      <div className="input-group my-3 mt-3">
+      <div className="input-group my-3 mt-3 w-50">
         <input
           type="text"
           className="form-control"
