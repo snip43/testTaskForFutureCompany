@@ -12,23 +12,25 @@
   
  <b> Реализация:</b> С помощью lodash-метода .orderBy,который позволяет указать порядок сортировки итераций для сортировки. Если порядок не указан, все значения сортируются в порядке возрастания.
 </p>
-//------------------------функция сортировки столбца------
-
-<code>
-  sortTableFunc = (sortColumn) => {
-  const { data, sort } = this.state;
-  const dataCopy = [...data];
-  const sortMethod = sort === 'asc' ? 'desc' : 'asc';
-  const sortingData = \_.orderBy(dataCopy, sortColumn, sortMethod);
-  this.setState({
-  data: sortingData,
-  sort: sortMethod,
-  sortField: sortColumn,
-  });
-  };
-
-</code>
-//----------------------------------------------------------------------------------------------------------------------
+<pre>
+  //------------------------функция сортировки столбца------
+  
+  <code>
+    sortTableFunc = (sortColumn) => {
+    const { data, sort } = this.state;
+    const dataCopy = [...data];
+    const sortMethod = sort === 'asc' ? 'desc' : 'asc';
+    const sortingData = \_.orderBy(dataCopy, sortColumn, sortMethod);
+    this.setState({
+    data: sortingData,
+    sort: sortMethod,
+    sortField: sortColumn,
+    });
+    };
+  
+  </code>
+  //----------------------------------------------------------------------------------------------------------------------
+</pre>
 
 <b>Клиентская пагинация: </b>данные необходимо отображать постранично, максимум 50 элементов на страницу.
 Необходимо предоставить пользовательскую навигацию для перехода по страницам.
