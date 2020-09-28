@@ -38,102 +38,116 @@
 <b>Реализация:</b>
 
 <p>
-  - Используем npm i react-paginate;
-  - свойство в стейте currentPage(текущая страница)
-  - свойство pageSize(размер страницы,по заданию pageSize:50)
-  - lodash.chunk -Создает массив элементов, разбитых на группы по длине размера. Если массив не может быть разделен равномерно, то последним фрагментом будут оставшиеся элементы.
+<pre>
+    - Используем npm i react-paginate;
+    - свойство в стейте currentPage(текущая страница)
+    - свойство pageSize(размер страницы,по заданию pageSize:50)
+    - lodash.chunk -Создает массив элементов, разбитых на группы по длине размера. Если массив не может быть разделен равномерно, то последним фрагментом будут оставшиеся элементы.
 
+</pre>
 </p>  
-//---------------------------------
-<code>
-  onPageChange = ({ selected }) => {
-  this.setState({ currentPage: selected });
-  };
-</code>
-//-------------------------------------
+<pre>
+  //---------------------------------
+  <code>
+    onPageChange = ({ selected }) => {
+    this.setState({ currentPage: selected });
+    };
+  </code>
+  //-------------------------------------
+</pre>
 
-<code>
-  {data.length > pageSize ? (
-  <ReactPaginate
-  previousLabel={'previous'}
-  nextLabel={'next'}
-  breakLabel={'...'}
-  breakClassName={'break-me'}
-  pageCount={pageCount}
-  marginPagesDisplayed={2}
-  initialPage={1}
-  pageRangeDisplayed={10}
-  onPageChange={this.onPageChange}
-  containerClassName={'pagination'}
-  activeClassName={'active'}
-  pageClassName="page-item"
-  pageLinkClassName="page-link"
-  previousClassName="page-item"
-  nextClassName="page-item"
-  previousLinkClassName="page-link"
-  nextLinkClassName="page-link"
-  forcePage={this.state.currentPage}
-  />
-  ) : null}
-</code>
+<pre>
+  <code>
+    {data.length > pageSize ? (
+    <ReactPaginate
+    previousLabel={'previous'}
+    nextLabel={'next'}
+    breakLabel={'...'}
+    breakClassName={'break-me'}
+    pageCount={pageCount}
+    marginPagesDisplayed={2}
+    initialPage={1}
+    pageRangeDisplayed={10}
+    onPageChange={this.onPageChange}
+    containerClassName={'pagination'}
+    activeClassName={'active'}
+    pageClassName="page-item"
+    pageLinkClassName="page-link"
+    previousClassName="page-item"
+    nextClassName="page-item"
+    previousLinkClassName="page-link"
+    nextLinkClassName="page-link"
+    forcePage={this.state.currentPage}
+    />
+    ) : null}
+  </code>
+</pre>
 
-//---------------------------------------------
-<code>const displayData = \_.chunk(visibleItems, pageSize)[currentPage];</code> // видимые элементы таблицы с учетом текущей страницы
-//------------------------------------------------------------------------------------------------------------------------
-
+<pre>
+  //---------------------------------------------
+  <code>const displayData = \_.chunk(visibleItems, pageSize)[currentPage];</code> // видимые элементы таблицы с учетом текущей страницы
+  //------------------------------------------------------------------------------------------------------------------------
+</pre>
 <p>
   <b>Фильтрация:</b> компонент предоставляет текстовое поле, в которое пользователь может ввести текст и строки таблицы, данные которых не содержат подстроку, введённую пользователем, скрываются. Перефильтрация осуществляется по нажатию на кнопку "Найти".
-
 </p>  
 <p>
-  <b>Реализация:</b>
-  -Используем "контролируемое" свойство в стейте "filterStr: '' "(Значение value в поле input)
-  -Кнопку "Найти" делать не стал. Поиск осуществляется по событию onChange в поле <input>
-  -Функция searchFilter принимает первым аргументом массив данных,вторым значение поля "filterStr"
-  -вывод
+<pre>
+    <b>Реализация:</b>
+    -Используем "контролируемое" свойство в стейте "filterStr: '' "(Значение value в поле input)
+    -Кнопку "Найти" делать не стал. Поиск осуществляется по событию onChange в поле <input>
+    -Функция searchFilter принимает первым аргументом массив данных,вторым значение поля "filterStr"
+    -вывод
+</pre>
 </p>
 
-//----------------------------поиск/фильтрация элементов------------------
-<code>
-onSearchChange = (filterStr) => {
-this.setState({ filterStr });
-};
+<pre>
+  //----------------------------поиск/фильтрация элементов------------------
+  <code>
+  onSearchChange = (filterStr) => {
+  this.setState({ filterStr });
+  };
+  
+  searchFilter = (items, filterStr) => {
+  if (filterStr === 0) {
+  return items;
+  }
+  return items.filter((item) => {
+  return (
+  item.firstName.toLowerCase().indexOf(filterStr.toLowerCase()) > -1 ||
+  item.lastName.toLowerCase().indexOf(filterStr.toLowerCase()) > -1 ||
+  item.email.toLowerCase().indexOf(filterStr.toLowerCase()) > -1 ||
+  item.phone.toLowerCase().indexOf(filterStr.toLowerCase()) > -1
+  );
+  });
+  };
+  </code>
+  //--------------------------------------------
+  <code>const visibleItems = this.searchFilter(data, filterStr);</code> //видимые элементы массива
+  //------------------------------------------------------------------------------------------------------------------------
 
-searchFilter = (items, filterStr) => {
-if (filterStr === 0) {
-return items;
-}
-return items.filter((item) => {
-return (
-item.firstName.toLowerCase().indexOf(filterStr.toLowerCase()) > -1 ||
-item.lastName.toLowerCase().indexOf(filterStr.toLowerCase()) > -1 ||
-item.email.toLowerCase().indexOf(filterStr.toLowerCase()) > -1 ||
-item.phone.toLowerCase().indexOf(filterStr.toLowerCase()) > -1
-);
-});
-};
-</code>
-//--------------------------------------------
-<code>const visibleItems = this.searchFilter(data, filterStr);</code> //видимые элементы массива
-//------------------------------------------------------------------------------------------------------------------------
-
+</pre>
 <p>По клику на строку таблицы значения полей выводятся в дополнительном блоке под таблицей.</p>
 
 <b>Реализация:</b>
 
 <p>
-  - В стейте новое свойство - 'userSelected: null'
-  - На каждый элемент в таблице навешиваем функцию viewUserInfo
+<pre>
+    - В стейте новое свойство - 'userSelected: null'
+    - На каждый элемент в таблице навешиваем функцию viewUserInfo
+</pre>
 </p>
-  //-------------Вывод детальной информации о пользователе ----------
-<code>
-    viewUserInfo = (elem) => {
-    this.setState({
-    userSelected: elem,
-    });
-    };
-</code>
-  //------------------------------------------
+<pre>
+    //-------------Вывод детальной информации о пользователе ----------
+  <code>
+      viewUserInfo = (elem) => {
+      this.setState({
+      userSelected: elem,
+      });
+      };
+  </code>
+    //------------------------------------------
+</pre>
 <p>  При клике на элемент таблицы открывается компонент UserInfo внизу таблицы.</p>
   //-----------------------------------------------------------------------------------------------------------------------
 
@@ -141,32 +155,38 @@ item.phone.toLowerCase().indexOf(filterStr.toLowerCase()) > -1
 //-----------------------------------------------------------------------------------------------------------------------
 
 <p>
-  Над таблицей присутсвует кнопка добавить, по нажатию на которую выпадает форма добавления ряда +------+------------+-----------------+-----------------+---------------+ | id | firstName | lastName | email | phone | +------+------------+-----------------+-----------------+---------------+ |input | input | input | input | input | +------+------------+-----------------+-----------------+---------------+
-  После заполнения всех инпутов активируется кнопка Добавить в таблицу которая вставляет заполненный ряд в начало таблицы
-
+<pre>
+    Над таблицей присутсвует кнопка добавить, по нажатию на которую выпадает форма добавления ряда +------+------------+-----------------+-----------------+---------------+ | id | firstName | lastName | email | phone | +------+------------+-----------------+-----------------+---------------+ |input | input | input | input | input | +------+------------+-----------------+-----------------+---------------+
+    После заполнения всех инпутов активируется кнопка Добавить в таблицу которая вставляет заполненный ряд в начало таблицы
+</pre>
 </p>  
 <b>Реализация:</b>
 
 <p>
-  - используем флаг isOpenForm
-  - используем функцию toggleOpenForm
+<pre>
+    - используем флаг isOpenForm
+    - используем функцию toggleOpenForm
+</pre>
 </p>
-  //----------------------Кнопка "добавить" -------------------
-<code>
-    toggleOpenForm = () => {
-    this.setState((state) => ({ isFormOpen: !state.isFormOpen }));
-    };
-</code>
-  //--------------------------------------
+<pre>
+    //----------------------Кнопка "добавить" -------------------
+  <code>
+      toggleOpenForm = () => {
+      this.setState((state) => ({ isFormOpen: !state.isFormOpen }));
+      };
+  </code>
+    //--------------------------------------
+</pre>
 <p>  По клику флаг меняется на true и на экран выводится форма AddUser.</p>
   //------------------------------------------------------------------------------------------------------------------------
 <p>
     Для демонстрации работы компонента необходимо сделать простую HTML страницу. Пользователю предлагается выбрать набор данных: маленький или большой. При выборе набора данных он загружается с сервера и по данным строится таблица.
-
 </p>  
  <b> Реализация:</b>
 <p>
-    На главном экране выведено 2 кнопки: "32 элемента" и "1000 элементов".
-    По нажатию на кнопку выводится соответствующее количество элементов в таблицу.
+<pre>
+      На главном экране выведено 2 кнопки: "32 элемента" и "1000 элементов".
+      По нажатию на кнопку выводится соответствующее количество элементов в таблицу.
+</pre>
 </p>
   //------------------------------------------------------------------------------------------------------------------------
